@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import CreditCardTextBox from '../CreditCardTextBox/CreditCardTextBox';
@@ -118,12 +119,13 @@ class Home extends Component<HomeProps, HomeState>{
 
     handleSubmit() {
         console.log('state', this.state);
-        if (!this.state.cardNumber || !this.state.cardName || !this.state.expirationMonth || !this.state.expirationYear || !this.state.cvv) {
+        if (this.isInvalid()) {
+            console.warn('Cannot Submit, Invalid State');
             return;
         }
         const submitDataModel: SubmitDataModel = {
-            cardNumber: this.state.cardNumber,
-            cardName: this.state.cardName,
+            cardNumber: this.state.cardNumber!,
+            cardName: this.state.cardName!,
             expirationMonth: parseInt(this.state.expirationMonth!),
             expirationYear: parseInt(this.state.expirationYear!),
             cvv: parseInt(this.state.cvv!)
@@ -134,23 +136,28 @@ class Home extends Component<HomeProps, HomeState>{
     handleCardNumberFocus = (focused: boolean) => (event: React.FocusEvent) => {
         this.setState({
             showFullCardNumber: focused
-        }, () => {
-            console.log('handleCardNumberFocus', this.state);
         });
+    }
+
+    isInvalid = () => {
+        return !this.state.cardNumber || !this.state.cardName || !this.state.expirationMonth || !this.state.expirationYear || !this.state.cvv;
     }
 
     render() {
         return (
-            <Box>
-                <div>
+            <Grid container spacing={2}
+                direction="column"
+                alignItems="center"
+                justifyContent="center">
+                <Grid item xs={12}>
                     <CreditCard
                         cardNumber={this.state.cardNumber}
                         cardName={this.state.cardName}
                         expirationMonth={this.state.expirationMonth}
                         expirationYear={this.state.expirationYear}
                         showFullCardNumber={this.state.showFullCardNumber}></CreditCard>
-                </div>
-                <div>
+                </Grid>
+                <Grid item container xs={12}>
                     <CreditCardTextBox
                         name="cardNumber"
                         value={this.state.cardNumber}
@@ -159,27 +166,33 @@ class Home extends Component<HomeProps, HomeState>{
                         onFocus={this.handleCardNumberFocus(true)}
                         onBlur={this.handleCardNumberFocus(false)}
                     ></CreditCardTextBox>
-                </div>
-                <div>
-                    <TextField required name="cardName" label="Card Name" variant="standard" value={this.state.cardName} onChange={enforceLength(50, this.handleChange)}></TextField>
-                </div>
-                <div>
-                    <TextField select required name="expirationMonth" label="Month" variant="standard" value={this.state.expirationMonth} onChange={this.handleChange}>
-                        {months.map((month) => (
-                            <MenuItem key={month.value} value={month.value}>{month.label}</MenuItem>
-                        ))}
-                    </TextField>
-                    <TextField select required name="expirationYear" label="Year" variant="standard" value={this.state.expirationYear} onChange={this.handleChange}>
-                        {years.map((year) => (
-                            <MenuItem key={year.value} value={year.value}>{year.label}</MenuItem>
-                        ))}
-                    </TextField>
-                    <TextField required label="CVV" name="cvv" variant="standard" value={this.state.cvv} onChange={enforceNumber(enforceLength(3, this.handleChange))} inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}></TextField>
-                </div>
-                <div>
+                </Grid>
+                <Grid item container xs={12}>
+                    <TextField fullWidth required name="cardName" label="Card Name" variant="standard" value={this.state.cardName} onChange={enforceLength(50, this.handleChange)}></TextField>
+                </Grid>
+                <Grid item container xs={12} spacing={2}>
+                    <Grid item xs={3}>
+                        <TextField fullWidth  select required name="expirationMonth" label="Month" variant="standard" value={this.state.expirationMonth} onChange={this.handleChange}>
+                            {months.map((month) => (
+                                <MenuItem key={month.value} value={month.value}>{month.label}</MenuItem>
+                            ))}
+                        </TextField>
+                    </Grid>
+                    <Grid item xs={3}>
+                        <TextField fullWidth  select required name="expirationYear" label="Year" variant="standard" value={this.state.expirationYear} onChange={this.handleChange}>
+                            {years.map((year) => (
+                                <MenuItem key={year.value} value={year.value}>{year.label}</MenuItem>
+                            ))}
+                        </TextField>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <TextField fullWidth  required label="CVV" name="cvv" variant="standard" value={this.state.cvv} onChange={enforceNumber(enforceLength(3, this.handleChange))} inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}></TextField>
+                    </Grid>
+                </Grid>
+                <Grid item xs={12}>
                     <Button variant="contained" onClick={() => { this.handleSubmit() }}>Submit</Button>
-                </div>
-            </Box>
+                </Grid>
+            </Grid>
         )
     }
 }

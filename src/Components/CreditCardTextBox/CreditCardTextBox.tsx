@@ -18,7 +18,7 @@ class CreditCardTextBox extends Component<CreditCardTextBoxProps>{
 
     render() {
         return (
-            <TextField required name={this.props.name} label={this.props.label} variant="standard" value={this.props.value}
+            <TextField fullWidth required name={this.props.name} label={this.props.label} variant="standard" value={this.props.value}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => this.props.onChange(event)}
                 onFocus={(event: React.FocusEvent<HTMLInputElement>)=> this.props.onFocus(event)}
                 onBlur={(event: React.FocusEvent<HTMLInputElement>)=> this.props.onBlur(event)}>
